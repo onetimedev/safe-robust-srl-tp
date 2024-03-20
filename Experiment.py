@@ -195,7 +195,9 @@ class Experiment:
             for i in range(len(episode_record)):
                 episode_record[i] = str(episode_record[i])
             data_entry = ",".join(episode_record)
-            self.experiment_data_manager.append_data_entry(data_entry)
+
+            if self.experiment_data_manager != None:
+                self.experiment_data_manager.append_data_entry(data_entry)
 
 
 

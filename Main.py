@@ -48,11 +48,19 @@ def stochastically_sample_function(env: SafeGridWorld, function: str, episodes=1
 
     return model_x_data, model_y_data
 
-# Parsing experiment parameters
+# Parsing experiment parameters.
+# Main.py requires:
+# Experiment length in episodes (integer), e.g.: 250
+# Outlier magnitude (integer), e.g.: 20
+# Outlier proportion (float), e.g.: 0.25
+# Number of switch states (integer), e.g.: 2
+# Save experiment data flag (boolean), e.g.: True or False
+# Outliers in cost model flag (boolean), e.g.: True or False
+# Outliers in reward model flag (boolean), e.g.: True or False
 try:
-    assert len(sys.argv) == 5
+    assert len(sys.argv) == 8
 except AssertionError:
-    print("Expecting\n$ python main.py [experiment length] [outlier magnitude] [outlier ratio] [number of switch states]")
+    print("Expecting\n$ python Main.py [experiment length] [outlier magnitude] [outlier ratio] [number of switch states] [save experiment data flag] [outliers in cost model flag] [outliers in reward model flag]")
     exit(0)
 
 # Preliminaries
@@ -64,10 +72,20 @@ safety_tolerance = 1 # Safety tolerance. d = 1 \in CMDP
 num_switch_states = 10 # Number of unsafe states that will change location under covariate shift. This serves as the degree of covariate shift
 num_unsafe_states = 15 # Total number of unsafe states in the environment
 
+# outlier flags
+outliers_in_cost_model = True
+outliers_in_reward_model = True
+
+# Save data flag
+record_experiment_data = True
+
 experiment_length = int(sys.argv[1]) # Experiment length in episodes. All experiments reported in the paper ran for 250 episodes.
 outlier_magnitude = float(sys.argv[2]) # Outlier magnitude
 outlier_ratio = float(sys.argv[3]) # Outlier ration - the proportion of training data that are outliers.
 num_switch_states = int(sys.argv[4]) # See above
+record_experiment_data = True if sys.argv[5] == "True" else False # See above
+outliers_in_cost_model = True if sys.argv[6] == "True" else False # See above
+outliers_in_reward_model = True if sys.argv[7] == "True" else False # See above
 
 # This is the instance of our SafeGridWorld Gym Environment.
 # The fixed_starting_loc flag tells the enviroment to randomise the agent's starting location at the genesis of each episode.
@@ -80,9 +98,6 @@ tp_reward_model = StudentTProcess(duplicate_observation_limit=reward_model_dupli
 gp_cost_model = GaussianProcess(duplicate_observation_limit=cost_model_duplicate_observation_limit)
 gp_reward_model = GaussianProcess(duplicate_observation_limit=reward_model_duplicate_observation_limit)
 
-# outlier flags
-outliers_in_cost_model = True
-outliers_in_reward_model = True
 
 # Sample c() and r() to generate the offline datasets
 cost_x_data, cost_y_data = stochastically_sample_function(env=env, function="c", episodes=100)
@@ -165,45 +180,52 @@ print(
     f"Experiment Length: {experiment_length}\n"
     f"Number of Unsafe States: {num_unsafe_states}\n"
     f"Number of Unsafe Switch States: {num_switch_states}\n"
+    f"Record Experiment Data: {record_experiment_data}\n"
 )
 # Perform covariate shift
 env.shift_distribution()
 
 # Setup data recording facilities
-directory = "ExperimentRuns"
-gp_experiment_id = f"experiment_gp_om={outlier_magnitude}_op={outlier_ratio}_epi={experiment_length}_nss={num_switch_states}.csv"
-tp_experiment_id = f"experiment_tp_om={outlier_magnitude}_op={outlier_ratio}_epi={experiment_length}_nss={num_switch_states}.csv"
-# Data we will record
-data_fields = [
-    "episode",
-    "mean_reward",
-    "mean_cost",
-    "reward_approximation_mse",
-    "observed_cost",
-    "approximated_cost",
-    "observed_cost_rate",
-    "total_cost",
-    "absolute_cost_prediction_error",
-    "task_completed",
-    "number_of_tasks_completed",
-    "steps",
-    "starting_location",
-    "goal_location",
-    "task_success_rate",
-    "safe_actions_mean_uncertainty",
-    "mean_episode_steps",
-    "number_successful_corrective_updates"
-]
-data_header = ",".join(data_fields)
-# Begin TP experiment.
-tp_experiment_data_manager = ExperimentDataManager(directory=directory, filename=tp_experiment_id, data_header=data_header)
+tp_experiment_data_manager = None
+gp_experiment_data_manager = None
+if record_experiment_data == True:
+    directory = "ExperimentRuns"
+    gp_experiment_id = f"experiment_gp_om={outlier_magnitude}_op={outlier_ratio}_epi={experiment_length}_nss={num_switch_states}.csv"
+    tp_experiment_id = f"experiment_tp_om={outlier_magnitude}_op={outlier_ratio}_epi={experiment_length}_nss={num_switch_states}.csv"
+    # Data we will record
+    data_fields = [
+        "episode",
+        "mean_reward",
+        "mean_cost",
+        "reward_approximation_mse",
+        "observed_cost",
+        "approximated_cost",
+        "observed_cost_rate",
+        "total_cost",
+        "absolute_cost_prediction_error",
+        "task_completed",
+        "number_of_tasks_completed",
+        "steps",
+        "starting_location",
+        "goal_location",
+        "task_success_rate",
+        "safe_actions_mean_uncertainty",
+        "mean_episode_steps",
+        "number_successful_corrective_updates"
+    ]
+    data_header = ",".join(data_fields)
+    # Begin TP experiment.
+    tp_experiment_data_manager = ExperimentDataManager(directory=directory, filename=tp_experiment_id,
+                                                       data_header=data_header)
+    gp_experiment_data_manager = ExperimentDataManager(directory=directory, filename=gp_experiment_id,
+                                                       data_header=data_header)
+
 print("Running TP Simulation...")
 tp_experiment = Experiment(env=env, cost_model=tp_cost_model, reward_model=tp_reward_model, episodes=experiment_length, d=safety_tolerance, data_manager=tp_experiment_data_manager)
 tp_mean_reward, tp_mean_cost = tp_experiment.start()
 print("--------- TP Experiment END --------\n\n\n")
 
 # Begin GP experiment
-gp_experiment_data_manager = ExperimentDataManager(directory=directory, filename=gp_experiment_id, data_header=data_header)
 print("Running GP Simulation...")
 gp_experiment = Experiment(env=env, cost_model=gp_cost_model, reward_model=gp_reward_model, episodes=experiment_length, d=safety_tolerance, data_manager=gp_experiment_data_manager)
 gp_mean_reward, gp_mean_cost = gp_experiment.start()
