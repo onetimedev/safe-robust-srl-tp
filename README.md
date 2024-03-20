@@ -10,3 +10,6 @@
 #### &nbsp;&nbsp;&nbsp; b) To run an experiment with custom parameters run 
 #### &nbsp;&nbsp;&nbsp; "python Main.py [experiment length] [outlier magnitude] [outlier ratio] [number of switch states] [record experiment data] [outliers in cost model] [outliers in reward model]" 
 #### &nbsp;&nbsp;&nbsp; e.g. "python Main.py 250 40 0.2 2 True True True"
+### Notes:
+#### Data discussed in the paper's data analysis section can be found in the "Data" directory
+#### If the "record experiment data" flag is set to True when running "Main.py" the data recorded can be found in the "ExperimentRuns" directory, with the experiment parameters used in the .csv filename.
