@@ -1,18 +1,14 @@
 absl-py==1.4.0
-ai-safety-gridworlds @ https://github.com/timorl/ai-safety-gridworlds/tarball/master#sha256=bdb0e65e06fd252972a5aeb63944ac613a759e53843153ac722e22e3b38ae2d9
 alabaster==0.7.13
 asttokens==2.4.0
 astunparse==1.6.3
 Babel==2.12.1
 backcall==0.2.0
-Bottleneck @ file:///opt/conda/conda-bld/bottleneck_1657175564434/work
 cachetools==5.3.1
 certifi==2023.7.22
 cffi==1.15.1
 charset-normalizer==3.2.0
 cloudpickle==2.2.1
-contourpy @ file:///opt/conda/conda-bld/contourpy_1663827406301/work
-cycler @ file:///tmp/build/80754af9/cycler_1637851556182/work
 Cython==3.0.2
 data==0.4
 decorator==5.1.1
@@ -42,38 +38,29 @@ ImageHash==4.3.1
 imageio==2.31.3
 imagesize==1.4.1
 importlib-metadata==6.8.0
-importlib-resources @ file:///tmp/build/80754af9/importlib_resources_1625135880749/work
 iniconfig==2.0.0
 ipdb==0.13.13
 ipython==8.15.0
 jax-jumpy==1.0.0
 jedi==0.19.0
 Jinja2==3.1.2
-joblib @ file:///croot/joblib_1685113087166/work
 keras==2.13.1
-kiwisolver @ file:///croot/kiwisolver_1672387140495/work
 latex==0.7.0
 libclang==16.0.6
 -e git+https://github.com/d-corsi/SafeRL.git@0c45898c0b64958a913a27b03cab106436dbb48c#egg=light_safety_gym&subdirectory=environments
 Markdown==3.4.4
 MarkupSafe==2.1.3
-matplotlib @ file:///croot/matplotlib-suite_1693812469450/work
 matplotlib-inline==0.1.6
-mkl-fft @ file:///croot/mkl_fft_1695058164594/work
-mkl-random @ file:///croot/mkl_random_1695059800811/work
 mkl-service==2.4.0
 mujoco==2.3.3
 -e git+https://github.com/openai/mujoco-py@a13903b82f1ab316815e63b3575526005b3b2ae1#egg=mujoco_py
 munkres==1.1.4
-numexpr @ file:///croot/numexpr_1696515281613/work
 numpy==1.23.5
 numpydoc==1.5.0
 nvidia-cublas-cu11==11.11.3.6
 nvidia-cudnn-cu11==8.6.0.163
 oauthlib==3.2.2
 opt-einsum==3.3.0
-packaging @ file:///croot/packaging_1693575174725/work
-pandas @ file:///croot/pandas_1692289311655/work
 parso==0.8.3
 pettingzoo==1.24.1
 pexpect==4.8.0
@@ -92,11 +79,8 @@ pygame==2.1.0
 pyglet==2.0.9
 Pygments==2.16.1
 PyOpenGL==3.1.7
-pyparsing @ file:///opt/conda/conda-bld/pyparsing_1661452539315/work
 pytest==7.4.2
 pytest-instafail==0.3.0
-python-dateutil @ file:///tmp/build/80754af9/python-dateutil_1626374649649/work
-pytz @ file:///croot/pytz_1695131579487/work
 PyWavelets==1.4.1
 PyYAML==6.0.1
 requests==2.31.0
@@ -104,11 +88,7 @@ requests-oauthlib==1.3.1
 rsa==4.9
 safe-grid-gym @ git+https://github.com/david-lindner/safe-grid-gym.git@f521e906735bb712a0217f491f269da2890c0f00
 safety-gymnasium==1.0.0
-scikit-learn @ file:///croot/scikit-learn_1690978916802/work
-scipy @ file:///croot/scipy_1691606680890/work/dist/scipy-1.11.1-cp39-cp39-linux_x86_64.whl#sha256=771fdae52630aa660eb5f4792df1a013cde34093b72f006c7ee1b7a031f02d0c
-seaborn @ file:///croot/seaborn_1673479180098/work
 shutilwhich==1.1.0
-six @ file:///tmp/build/80754af9/six_1644875935023/work
 snowballstemmer==2.2.0
 Sphinx==7.2.5
 sphinx-rtd-theme==1.3.0
@@ -128,14 +108,11 @@ tensorflow-estimator==2.13.0
 tensorflow-io-gcs-filesystem==0.34.0
 tensorflow-probability==0.21.0
 termcolor==2.3.0
-threadpoolctl @ file:///Users/ktietz/demo/mc3/conda-bld/threadpoolctl_1629802263681/work
 tomli==2.0.1
 traitlets==5.9.0
 typing_extensions==4.5.0
-tzdata @ file:///croot/python-tzdata_1690578112552/work
 urllib3==1.26.16
 wcwidth==0.2.6
 Werkzeug==2.3.7
 wrapt==1.15.0
 xmltodict==0.13.0
-zipp @ file:///croot/zipp_1672387121353/work
