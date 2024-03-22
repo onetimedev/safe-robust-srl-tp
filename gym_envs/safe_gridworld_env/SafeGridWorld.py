@@ -47,7 +47,6 @@ class SafeGridWorld(gym.Env):
 
         self._agent_start_location, self._unsafe_states, self._agent_goal_location = self._generate_dynamic_world_objects()
 
-        # self._agent_goal_location = np.array(goal_location, dtype=np.float64)
         self._agent_current_location = self._agent_start_location
 
         self._agent_step = 0
@@ -56,18 +55,7 @@ class SafeGridWorld(gym.Env):
         self._default_cost = 1
         self.MAX_REWARD = 50
 
-
-        # self.observation_space = spaces.Dict(
-        #     {
-        #         "agent": spaces.Box(0, self._world_size-1, shape=(2,), dtype=int),
-        #         "target": spaces.Box(0, self._world_size-1, shape=(2,), dtype=int)
-        #     }
-        # )
         self.observation_space = spaces.Box(0, self._world_size-1, shape=(5,), dtype=np.float64)
-        # 0 = RIGHT
-        # 1 = DOWN
-        # 2 = LEFT
-        # 3 = UP
 
         self._AGENT_START_ = 1
         self._AGENT_CURRENT_ = 2
@@ -104,8 +92,6 @@ class SafeGridWorld(gym.Env):
 
 
     def _generate_dynamic_world_objects(self):
-
-
         goal_state = [np.random.randint(0, self._world_size-1), np.random.randint(0, self._world_size-1)] if self._fixed_goal_loc == False else self._set_goal_loc
 
         while (goal_state in self._unsafe_states):
@@ -115,8 +101,6 @@ class SafeGridWorld(gym.Env):
             agent_start_ub = self._world_size - 1
             agent_start_lb = 0
         elif self._bias_starting_state:
-            # agent_start_ub = self._bias_starting_range_ub - 1
-            # agent_start_lb = self._bias_starting_range_lb
             agent_start_ub = 11
             agent_start_lb = 10
 
@@ -157,18 +141,6 @@ class SafeGridWorld(gym.Env):
                     world_objects.extend(self._surrounding_states(unsafe_state))
                     n_us.append(unsafe_state)
 
-            # unsafe_states = self._unsafe_states
-            #
-            # for i in range(self._additional_unsafe_states):
-            #     unsafe_state = [np.random.randint(0, self._world_size - 1), np.random.randint(0, self._world_size - 1)]
-            #
-            #     while unsafe_state in world_objects:
-            #         unsafe_state = [np.random.randint(0, self._world_size - 1), np.random.randint(0, self._world_size - 1)]
-            #     world_objects.append(unsafe_state)
-            #     world_objects.extend(self._surrounding_states(unsafe_state))
-            #     unsafe_states.append(unsafe_state)
-            #
-            # self._num_unsafe_states += self._additional_unsafe_states
             print(f"New unsafe states: {n_us}")
             return np.array(world_objects[0], dtype=np.float64), new_unsafe_states, np.array(goal_state, dtype=np.float64)
 
@@ -181,8 +153,6 @@ class SafeGridWorld(gym.Env):
                 unsafe_states.append(unsafe_state)
                 world_objects.append(unsafe_state)
                 world_objects.extend(self._surrounding_states(unsafe_state))
-
-
 
         return np.array(world_objects[0], dtype=np.float64), unsafe_states, np.array(goal_state, dtype=np.float64)
 
@@ -210,9 +180,7 @@ class SafeGridWorld(gym.Env):
         observation = np.concatenate((observation, [distance_to_unsafe_state]))
         return observation
     def _get_info(self):
-
         return {"task_completed": self._task_completed(), "state_cost": self._get_state_cost()}
-
 
     def _distance_to_closest_unsafe_state(self):
 
@@ -233,24 +201,15 @@ class SafeGridWorld(gym.Env):
 
         self._agent_start_location, self._unsafe_states, self._agent_goal_location = self._generate_dynamic_world_objects()
         self._agent_current_location = self._agent_start_location
-
         self._agent_step = 0
         observation = self._get_obs()
         info = self._get_info()
-
         self.test_fidelity()
-
-        # setup obstacles
-
         return observation, info
 
-
     def step(self, action):
-
-
         direction = self._action_to_direction[action]
         self._agent_current_location = np.clip(self._agent_current_location + direction, 0, self._world_size-1)
-
         terminated = self._has_terminated()
         reward = self._reward_functon()
         observation = self._get_obs()
@@ -259,29 +218,17 @@ class SafeGridWorld(gym.Env):
         return observation, np.float64(reward), terminated, False, info
 
     def _has_terminated(self):
-        # add additional termination conditions later
-
         # Termination condition 1
         task_completed = self._task_completed()
         # Termination condition 2
         exceeded_steps = self._agent_step == self._agent_max_step
-
         return task_completed or exceeded_steps
 
     def _task_completed(self):
         return np.array_equal(self._agent_current_location, self._agent_goal_location)
+
     def _reward_functon(self):
         return -(self._unnormalised_l2_norm(l1=self._agent_current_location, l2=self._agent_goal_location))
-
-        if self._task_completed():
-            return self.MAX_REWARD
-        else:
-            # return -(self._distance_function(l1=self._agent_current_location, l2=self._agent_goal_location))
-            # return -(self._normalised_l2_norm(l1=self._agent_current_location, l2=self._agent_goal_location))
-            return -(self._unnormalised_l2_norm(l1=self._agent_current_location, l2=self._agent_goal_location))
-
-        # return 1 if self._task_completed() == True else 0
-
 
     def _unnormalised_l1_norm(self, l1, l2):
         return np.linalg.norm(l1 - l2, ord=1)
@@ -294,7 +241,6 @@ class SafeGridWorld(gym.Env):
         return l2_norm / (1.0 + l2_norm)
 
     def _get_state_cost(self):
-
        distance_to_unsafe_state, unsafe_state = self._distance_to_closest_unsafe_state()
        return -(distance_to_unsafe_state)
 
