@@ -1,6 +1,6 @@
-# Running the SARSP Algorithm
+# Reproducing Our Results.
 ### Code and results for our paper: 
-#### "Robust Hybrid Safe Reinforcement Learning: Distribution Shift and Outliers Using the Student-t Process"
+#### "Hybrid Safe Reinforcement Learning: Tackling Distribution Shift and Outliers with the Student-t's Process"
 #### Steps to Run:
 #### 1) Clone the repo onto your local machine
 #### 2) Run the "setup_env.sh" shell script using "./setup_env.sh". Remember to follow installation prompts.
